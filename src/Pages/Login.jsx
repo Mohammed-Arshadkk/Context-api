@@ -1,30 +1,35 @@
-import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../Modules/Login.css';
-import { UserContext } from '../Context/UserContextProvider';
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../Modules/Login.css";
+import { UserContext } from "../Context/UserContextProvider";
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // Added error state
   const navigate = useNavigate();
 
-  const {userData, setUserData} = useContext(UserContext)
+  const { userData } = useContext(UserContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
- // Validate username and password (you can replace this with your actual authentication logic)
- const existingUser = userData.find(
-  (user) => user.username === username && user.password === password
-);
 
-if (existingUser) {
-  // User exists, navigate to home page
-  navigate('/home');
-} else {
-  // User doesn't exist, display error
-  console.log('Invalid username or password');
-}
-};
+    // Retrieve user data from localStorage
+    const storedUserData = JSON.parse(localStorage.getItem("userData")) || [];
+
+    // Validate username and password
+    const existingUser = storedUserData.find(
+      (user) => user.username === username && user.password === password
+    );
+
+    if (existingUser) {
+      // User exists, navigate to home page
+      navigate("/home");
+    } else {
+      // User doesn't exist or password is incorrect, display error
+      setError("Invalid username or password");
+    }
+  };
 
   return (
     <>
@@ -54,6 +59,17 @@ if (existingUser) {
         />
 
         <button type="submit">Log In</button>
+
+        <p
+          style={{
+            color: "red",
+            display: "flex",
+            justifyContent: "center",
+            fontStyle: "bold",
+          }}
+        >
+          {error}
+        </p>
       </form>
     </>
   );

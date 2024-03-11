@@ -15,10 +15,10 @@ function Signup() {
     username,
     email,
     password,
-    confirmPassword
-  }
+    confirmPassword,
+  };
 
-  const { userData , setUserData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
 
   const handleSignup = (event) => {
     event.preventDefault();
@@ -44,30 +44,40 @@ function Signup() {
       return;
     }
 
-    // check if user is alredy exist
-    const existingUser = userData.find(
-      (user) => user.username === username || user.email === email
-    );
+    // Retrieve user data from localStorage
+    const storedUserData = JSON.parse(localStorage.getItem("userData"));
+    console.log(storedUserData);
 
-    if(existingUser) {
-      setError('Username or email already exists. Please choose a different username or email.')
-      return ;
+    // Check if user already exists in localStorage
+    if (storedUserData) {
+      const existingUser = storedUserData.find(
+        (user) => user.username === username || user.email === email
+      );
+
+      if (existingUser) {
+        setError(
+          "Username or email already exists. Please choose a different username or email."
+        );
+        return;
+      }
     }
 
-      // Form validation passed, create user data
-      const newUserData = {
-        username,
-        email,
-        password, 
-      };
+    // Form validation passed, create user data
+    const newUserData = {
+      username,
+      email,
+      password,
+    };
 
-      setUserData([...userData, newUserData])
-
+    setUserData([...userData, newUserData]);
+    localStorage.setItem(
+      "userData",
+      JSON.stringify([...userData, newUserData])
+    );
 
     // Navigate to home page
     navigate("/home");
   };
-
 
   return (
     <div>
